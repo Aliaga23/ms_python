@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 import os
 import warnings
+from dotenv import load_dotenv
+
+load_dotenv()
 
 warnings.filterwarnings('ignore')
 
@@ -23,12 +26,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from app.routes import survey_routes, model_routes, text_analysis_routes, kmeans_routes
+from app.routes import survey_routes, model_routes, text_analysis_routes, kmeans_routes, gpt_analysis_routes
 
 app.include_router(survey_routes.router, tags=["surveys"])
 app.include_router(model_routes.router, tags=["models"])
 app.include_router(text_analysis_routes.router, tags=["text-analysis"])
 app.include_router(kmeans_routes.router, tags=["kmeans"])
+app.include_router(gpt_analysis_routes.router, tags=["gpt-analysis"])
 
 @app.get("/")
 async def root():
@@ -49,7 +53,11 @@ async def root():
                 "status": "/text-model-status"
             },
             "kmeans": {
-                "analyze_survey": "/analyze-survey-kmeans"
+                "analyze_survey": "/analyze-survey-kmeans",
+                "analyze_complete_with_gpt": "/analyze-survey-complete"
+            },
+            "gpt_analysis": {
+                "analyze_clustering": "/analyze-with-gpt"
             },
             "health": "/health"
         }
