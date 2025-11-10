@@ -7,7 +7,6 @@ clustering_service = SurveyClusteringService()
 
 @router.post("/upload-survey-data")
 async def upload_survey_data(file: UploadFile = File(...)):
-    """Carga datos de encuesta desde archivo JSON"""
     try:
         if not file.filename.endswith('.json'):
             raise HTTPException(status_code=400, detail="File must be a JSON file")
@@ -45,7 +44,6 @@ async def upload_survey_data(file: UploadFile = File(...)):
 
 @router.post("/upload-survey-data-direct")
 async def upload_survey_data_direct(survey_data: dict):
-    """Carga datos de encuesta directamente como JSON en el body"""
     try:
         success = clustering_service.load_survey_data(survey_data)
         

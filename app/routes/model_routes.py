@@ -7,7 +7,6 @@ clustering_service = SurveyClusteringService()
 
 @router.post("/train-model")
 async def train_model(request: ModelTrainingRequest):
-    """Entrena el modelo K-means"""
     try:
         result = clustering_service.train_model(
             n_clusters=request.n_clusters,
@@ -19,7 +18,6 @@ async def train_model(request: ModelTrainingRequest):
 
 @router.post("/predict-cluster")
 async def predict_cluster(request: ClusterPredictionRequest):
-    """Predice el cluster para nuevas características de usuario"""
     try:
         result = clustering_service.predict_cluster(request.user_features)
         return result
@@ -28,7 +26,6 @@ async def predict_cluster(request: ClusterPredictionRequest):
 
 @router.delete("/reset-model")
 async def reset_model():
-    """Resetea el modelo y limpia datos"""
     try:
         clustering_service.reset_model()
         return {"message": "Model and data reset successfully"}

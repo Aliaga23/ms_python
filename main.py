@@ -10,9 +10,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 app = FastAPI(
-    title="Survey K-means Clustering API",
-    description="API para análisis de clustering K-means en datos de encuestas",
-    version="1.0.0"
+    title="Survey Analysis API",
+    description="API para análisis de clustering K-means y análisis de texto con ML",
+    version="2.0.0"
 )
 
 app.add_middleware(
@@ -23,28 +23,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from app.routes import survey_routes, model_routes
+from app.routes import survey_routes, model_routes, text_analysis_routes, kmeans_routes
 
 app.include_router(survey_routes.router, tags=["surveys"])
 app.include_router(model_routes.router, tags=["models"])
+app.include_router(text_analysis_routes.router, tags=["text-analysis"])
+app.include_router(kmeans_routes.router, tags=["kmeans"])
 
 @app.get("/")
 async def root():
-    """Endpoint raíz con información de la API"""
     return {
-        "message": "Survey K-means Clustering API",
-        "version": "1.0.0",
+        "message": "Survey Analysis API",
+        "version": "2.0.0",
         "endpoints": {
-            "upload_data": "/upload-survey-data",
-            "train_model": "/train-model",
-            "predict": "/predict-cluster",
+            "clustering": {
+                "upload_data": "/upload-survey-data",
+                "train_model": "/train-model",
+                "predict": "/predict-cluster"
+            },
+            "text_analysis": {
+                "analyze_complete": "/analyze-text-complete",
+                "analyze": "/analyze-text",
+                "train": "/train-text-model",
+                "predict": "/predict-text",
+                "status": "/text-model-status"
+            },
+            "kmeans": {
+                "analyze_survey": "/analyze-survey-kmeans"
+            },
             "health": "/health"
         }
     }
 
 @app.get("/health")
 async def health_check():
-    """Endpoint de health check"""
     model_path = "survey_clustering_model.pkl"
     return {
         "status": "healthy",

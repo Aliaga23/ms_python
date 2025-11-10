@@ -18,7 +18,6 @@ class SurveyClusteringService:
         return cls._instance
     
     def load_survey_data(self, json_data):
-        """Carga datos de encuesta desde JSON - optimizado"""
         try:
             from app.services.survey_analyzer import SurveyAnalyzer
             
@@ -32,7 +31,6 @@ class SurveyClusteringService:
             raise HTTPException(status_code=500, detail=f"Error loading data: {str(e)}")
     
     def train_model(self, n_clusters: Optional[int] = None, max_k: int = 6):
-        """Entrena el modelo K-means - sin plots para mayor velocidad"""
         if self.analyzer is None:
             raise HTTPException(status_code=400, detail="No data loaded. Upload survey data first.")
         
@@ -61,7 +59,6 @@ class SurveyClusteringService:
             raise HTTPException(status_code=500, detail=f"Error training model: {str(e)}")
     
     def _load_model_cached(self):
-        """Carga el modelo con caché para mayor velocidad"""
         if self._model_cache is None:
             if not os.path.exists(self.model_path):
                 raise HTTPException(status_code=400, detail="Model not trained. Train model first.")
@@ -72,7 +69,6 @@ class SurveyClusteringService:
         return self._model_cache
     
     def predict_cluster(self, user_features: UserFeatures):
-        """Predice cluster - optimizado con caché"""
         try:
             model_data = self._load_model_cached()
             
@@ -97,7 +93,6 @@ class SurveyClusteringService:
             raise HTTPException(status_code=500, detail=f"Error predicting cluster: {str(e)}")
     
     def _convert_user_features_to_vector(self, user_features: UserFeatures, feature_columns: List[str]):
-        """Convierte características de usuario a vector de features"""
         feature_vector = []
         
         for col in feature_columns:
@@ -125,7 +120,6 @@ class SurveyClusteringService:
         return feature_vector
     
     def reset_model(self):
-        """Resetea el modelo y limpia datos"""
         self.analyzer = None
         self._model_cache = None
         
