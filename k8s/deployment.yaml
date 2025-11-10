@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sw2p2-backend
+  labels:
+    app: sw2p2-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sw2p2-backend
+  template:
+    metadata:
+      labels:
+        app: sw2p2-backend
+    spec:
+      containers:
+      - name: sw2p2-backend
+        image: sw2p2registry8598.azurecr.io/sw2p2-ml-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: sw2p2-secrets
+              key: OPENAI_API_KEY
+        command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5

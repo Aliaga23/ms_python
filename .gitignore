@@ -70,3 +70,5 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+/k8s/secrets.yaml
